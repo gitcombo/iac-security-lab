@@ -1,0 +1,6 @@
+*
+!docker/
+!docker/Dockerfile
+!app/
+!app/tickets.sh
+!app/tickets.tsv
