@@ -17,3 +17,16 @@ ansible-lint --profile production ansible/
 ```
 
 Los archivos son ejemplos para análisis estático. El laboratorio no despliega recursos.
+
+## Aplicación de demostración
+
+El contenedor ejecuta un gestor de tickets simulado en modo de reporte. Lee registros ficticios, cuenta los tickets por estado y muestra cuántos pendientes son de prioridad alta. Termina con código 0 si el archivo es válido y 2 si hay un error de entrada.
+El pipeline también construye la imagen y verifica que el reporte coincida con el resultado esperado al ejecutarla sin red, como usuario lab.
+
+```bash
+sh app/tickets.sh
+docker build -f docker/Dockerfile -t iac-security-lab .
+docker run --rm iac-security-lab
+```
+
+Para probar otro archivo local, ejecuta `sh app/tickets.sh archivo.tsv`. Cada fila debe contener un ID `INC-<número>`, un estado (`abierto`, `en_progreso` o `resuelto`) y una prioridad (`alta`, `media` o `baja`), separados por tabulaciones y sin encabezado.
