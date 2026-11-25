@@ -21,6 +21,7 @@ Los archivos son ejemplos para análisis estático. El laboratorio no despliega 
 ## Aplicación de demostración
 
 El contenedor ejecuta un gestor de tickets simulado en modo de reporte. Lee registros ficticios, cuenta los tickets por estado y muestra cuántos pendientes son de prioridad alta. Termina con código 0 si el archivo es válido y 2 si hay un error de entrada.
+El pipeline también construye la imagen y verifica que el reporte coincida con el resultado esperado al ejecutarla sin red, como usuario lab.
 
 ```bash
 sh app/tickets.sh

@@ -49,3 +49,10 @@ jobs:
       - name: Gate ansible-lint
         if: always()
         run: ansible-lint --profile production ansible/
+      - name: Probar aplicación de tickets en Docker
+        run: |
+          docker build -f docker/Dockerfile -t iac-security-lab .
+          test "$(docker image inspect iac-security-lab --format '{{.Config.User}}')" = lab
+          printf '%s\n' 'Total de tickets: 4' 'Abiertos: 2' 'En progreso: 1' 'Resueltos: 1' 'Pendientes de prioridad alta: 1' > "$RUNNER_TEMP/tickets-expected.txt"
+          docker run --rm --network none iac-security-lab > "$RUNNER_TEMP/tickets-actual.txt"
+          diff -u "$RUNNER_TEMP/tickets-expected.txt" "$RUNNER_TEMP/tickets-actual.txt"
