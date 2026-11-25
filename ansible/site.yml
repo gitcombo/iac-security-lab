@@ -4,6 +4,7 @@
   gather_facts: false
   tasks:
     - name: Guardar estado local
-      copy:
+      ansible.builtin.copy:
         dest: /tmp/iac-lab-state
+        mode: "0600"
         content: "ready\n"
