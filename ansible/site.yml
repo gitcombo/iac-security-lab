@@ -1,0 +1,9 @@
+---
+- name: Preparar archivo de estado del laboratorio
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Guardar estado local
+      copy:
+        dest: /tmp/iac-lab-state
+        content: "ready\n"

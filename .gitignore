@@ -1,0 +1,4 @@
+.ansible/
+reportes/
+__pycache__/
+.venv-checkov/

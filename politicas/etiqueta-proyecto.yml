@@ -1,0 +1,11 @@
+metadata:
+  id: CKV2_CUSTOM_1
+  name: Los volúmenes EBS deben tener la etiqueta Project con el valor iac-security-lab
+  category: CONVENTION
+definition:
+  cond_type: attribute
+  resource_types:
+    - aws_ebs_volume
+  attribute: tags.Project
+  operator: equals
+  value: iac-security-lab

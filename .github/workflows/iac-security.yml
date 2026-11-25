@@ -1,0 +1,51 @@
+name: Seguridad IaC
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  security-events: write
+jobs:
+  iac:
+    name: Escaneo IaC
+    runs-on: ubuntu-latest
+    env:
+      NO_COLOR: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Instalar herramientas
+        run: |
+          python -m venv .venv-checkov
+          .venv-checkov/bin/pip install checkov==3.2.495
+          python -m pip install ansible-core==2.17.14 ansible-lint==24.12.2
+      - name: Generar SARIF
+        run: |
+          .venv-checkov/bin/checkov -d . --framework terraform dockerfile --external-checks-dir politicas --soft-fail -o sarif --output-file-path reportes
+      - name: Guardar SARIF
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-sarif
+          path: reportes/results_sarif.sarif
+          if-no-files-found: error
+      - name: Publicar en Code Scanning
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: reportes/results_sarif.sarif
+          category: checkov
+      - name: Gate Checkov
+        if: always()
+        run: |
+          .venv-checkov/bin/checkov -d . --framework terraform dockerfile --external-checks-dir politicas --compact --quiet
+      - name: Validar sintaxis de Ansible
+        if: always()
+        run: ansible-playbook -i ansible/inventory.ini ansible/site.yml --syntax-check
+      - name: Gate ansible-lint
+        if: always()
+        run: ansible-lint --profile production ansible/
